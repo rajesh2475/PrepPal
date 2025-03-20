@@ -21,10 +21,11 @@ def schedule_interview_api():
     """
     try:
         data = request.json
-        candidate_id = data.get("email")
+        candidate_id = data.get("candidate_id")
         interview_date = data.get("interview_date")
         job_id = data.get("job_id")
 
+        # Validate required fields
         if not candidate_id or not interview_date or not job_id:
             return jsonify({"success": False, "message": "Missing required fields"}), 400
 
