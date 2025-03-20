@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrepPal - Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<script>
+    function openPositionModal(job = null) {
+
+        const form = document.getElementById("positionForm");
+        form.action = "/jobs/job/save";
+        if (job) {
+            // If job exists, fill the form for editing
+            document.getElementById("positionModalLabel").innerText = "Edit Position";
+            document.getElementById("job_id").value = job.id;
+            document.getElementById("position").value = job.position;
+            document.getElementById("experience").value = job.experience;
+            document.getElementById("vacancies").value = job.vacancies;
+            document.getElementById("location").value = job.location;
+            document.getElementById("must_have").value = job.must_have;
+            document.getElementById("good_to_have").value = job.good_to_have;
+            document.getElementById("description").value = job.description;
+            document.getElementById("role").value = job.role;
+            document.getElementById("education").value = job.education;
+            document.getElementById("employment_type").value = job.employment_type;
+        } else {
+            // If adding a new job, reset the form
+            document.getElementById("positionModalLabel").innerText = "Add New Position";
+            document.getElementById("positionForm").reset();
+            document.getElementById("job_id").value = "";
+        }
+    
+        // Show the modal
+        var modal = new bootstrap.Modal(document.getElementById("positionModal"));
+        modal.show();
+    }
+</script>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">PrepPal – Your Interview Buddy</h2>
+
+        {% if 'user' in session %}
+            <!-- Top Navigation Bar -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container-fluid">
+                    <a class="navbar-brand" href="#">PrepPal</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ url_for('jobs.positions') }}">Open Positions</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('interview.mock_interview') }}">Mock Interview AI</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('chat.qna') }}">Ask ChatGPT</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="d-flex">
+                        <span class="navbar-text text-white me-3">Welcome, {{ session['user'] }}!</span>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Dynamic Content Section -->
+            <div class="mt-4">
+                {% block content %}{% endblock %}
+            </div>
+
+        {% else %}
+            <!-- Show Login and Signup Sections if Not Logged In -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h3>Login</h3>
+                    <form method="POST" action="{{ url_for('auth.login') }}">
+                        {{ login_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ login_form.email.label }}<br>
+                            {{ login_form.email(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ login_form.password.label }}<br>
+                            {{ login_form.password(class="form-control") }}
+                        </div>
+                        {{ login_form.submit(class="btn btn-primary") }}
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <h3>Sign Up</h3>
+                    <form method="POST" action="{{ url_for('auth.signup') }}">
+                        {{ signup_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ signup_form.email.label }}<br>
+                            {{ signup_form.email(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ signup_form.password.label }}<br>
+                            {{ signup_form.password(class="form-control") }}
+                        </div>
+                        {{ signup_form.submit(class="btn btn-success") }}
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <!-- New Position Modal (Reused for Editing) -->
+    <div class="modal fade" id="positionModal" tabindex="-1" aria-labelledby="positionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="positionModalLabel">Add New Position</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="positionForm">
+                        <input type="hidden" name="job_id" id="job_id"> <!-- Hidden field for editing -->
+
+                        <div class="form-group">
+                            <label>Position</label>
+                            <input type="text" name="position" id="position" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Experience Required</label>
+                            <input type="text" name="experience" id="experience" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Number of Vacancies</label>
+                            <input type="number" name="vacancies" id="vacancies" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Location</label>
+                            <input type="text" name="location" id="location" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Must-Have Skills (comma-separated)</label>
+                            <input type="text" name="must_have" id="must_have" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Good-to-Have Skills (comma-separated)</label>
+                            <input type="text" name="good_to_have" id="good_to_have" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Job Description</label>
+                            <textarea name="description" id="description" class="form-control" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <input type="text" name="role" id="role" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Minimum Education Required</label>
+                            <input type="text" name="education" id="education" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Employment Type</label>
+                            <select name="employment_type" id="employment_type" class="form-control">
+                                <option>Full-Time</option>
+                                <option>Part-Time</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-success mt-2">Save Position</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

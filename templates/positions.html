@@ -1,0 +1,31 @@
+{% extends "home.html" %}
+
+{% block content %}
+<h3>Open Positions</h3>
+
+<!-- Add New Position Button -->
+<button type="button" class="btn btn-warning" onclick='openPositionModal()'>
+    ➕ Add New Position
+</button>
+
+<!-- Job Listings Table -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Position</th>
+            <th>Experience Required</th>
+            <th>Job Type</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in positions %}
+        <tr>
+            <td><a href="{{ url_for('jobs.job_details', job_id=job.id) }}">{{ job.position }}</a></td>
+            <td>{{ job.experience }}</td>
+            <td>{{ job.employment_type }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

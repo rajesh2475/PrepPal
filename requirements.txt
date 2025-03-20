@@ -1,0 +1,8 @@
+Flask
+python-dotenv  # For loading environment variables (optional)
+flask-wtf
+email-validator
+PyPDF2
+python-docx
+spacy
+# python -m spacy download en_core_web_sm

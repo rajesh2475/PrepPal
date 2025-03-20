@@ -1,0 +1,195 @@
+{% extends "home.html" %}
+
+{% block content %}
+<h3>{{ job.position }}</h3>
+
+<ul>
+    <li><strong>Experience Required:</strong> {{ job.experience }}</li>
+    <li><strong>Number of Vacancies:</strong> {{ job.vacancies }}</li>
+    <li><strong>Location:</strong> {{ job.location }}</li>
+    <li><strong>Must-Have Skills:</strong> {{ job.must_have }}</li>
+    <li><strong>Good-to-Have Skills:</strong> {{ job.good_to_have }}</li>
+    <li><strong>Job Description:</strong> {{ job.description }}</li>
+    <li><strong>Role:</strong> {{ job.role }}</li>
+    <li><strong>Minimum Education Required:</strong> {{ job.education }}</li>
+    <li><strong>Employment Type:</strong> {{ job.employment_type }}</li>
+</ul>
+
+<!-- Buttons for Edit & Delete -->
+<button type="button" class="btn btn-warning" onclick='openPositionModal({{ job | tojson | safe }})'>✏️ Edit</button>
+<form method="POST" action="{{ url_for('jobs.delete_job', job_id=job.id) }}" style="display:inline;">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this position?')">Delete</button>
+</form>
+
+<!-- Add Candidate Button -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#candidateModal">➕ Add Candidate</button>
+
+<!-- Candidate Modal -->
+<div class="modal fade" id="candidateModal" tabindex="-1" aria-labelledby="candidateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="candidateModalLabel">Add Candidate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="candidateForm" enctype="multipart/form-data">
+                    <input type="hidden" name="job_id" value="{{ job.id }}">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="text" name="phone" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Experience (in years)</label>
+                        <input type="number" name="experience" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Resume Upload</label>
+                        <input type="file" name="resume" class="form-control" accept=".pdf,.doc,.docx" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save Candidate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('jobs.positions') }}" class="btn btn-primary">Back to Positions</a>
+
+<h3>List of Candidates</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Score</th>
+            <th>Match</th>
+        </tr>
+    </thead>
+    <tbody id="candidates-list"></tbody>
+</table>
+
+<div id="toastContainer" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1050;"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const jobId = {{ job.id }};
+        loadCandidates(jobId);
+
+        document.getElementById("candidateForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+            try {
+                let response = await fetch("/candidate/add_candidate", {
+                    method: "POST",
+                    body: formData
+                });
+                let result = await response.json();
+                if (result.success) {
+                    showToast("Candidate added successfully!", "success");
+                    loadCandidates(jobId);
+                    document.getElementById("candidateForm").reset();
+                    let modal = bootstrap.Modal.getInstance(document.getElementById("candidateModal"));
+                    modal.hide();
+                } else {
+                    showToast(result.message, "error");
+                }
+            } catch (error) {
+                showToast("Error submitting the form. Please try again!", "error");
+            }
+        });
+    });
+
+
+
+    async function loadCandidates(jobId) {
+        const response = await fetch(`/candidate/candidates/${jobId}`);
+        const candidates = await response.json();
+        const tableBody = document.getElementById("candidates-list");
+        tableBody.innerHTML = "";
+
+        if (!Array.isArray(candidates) || candidates.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="6">No candidates found.</td></tr>`;
+            return;
+        }
+
+        candidates.forEach(candidate => {
+            let matchIcon = candidate.score > 0.6 ? "✅" : "❌";
+
+            tableBody.innerHTML += `
+                <tr>
+                    <td>${candidate.name}</td>
+                    <td>${candidate.email}</td>
+                    <td>${candidate.phone}</td>
+                    <td>${candidate.score.toFixed(2)}</td>
+                    <td>${matchIcon}</td>
+                    <td>
+                        <!-- Schedule Interview Button -->
+                        <button class="btn btn-sm btn-primary" onclick="scheduleInterview('${candidate.email}')">
+                            📅 Schedule
+                        </button>
+                        <!-- Remove Candidate Button -->
+                        <button class="btn btn-sm btn-danger" onclick="removeCandidate('${candidate.email}', '${jobId}')">
+                            ❌ Remove
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // Function to schedule an interview
+    function scheduleInterview(email) {
+        alert(`Scheduling interview for Candidate ID: ${email}`);
+        // Implement interview scheduling logic here (e.g., open a modal or redirect to another page)
+    }
+
+    // Function to remove a candidate
+    async function removeCandidate(email, jobId) {
+        try {
+            let response = await fetch(`/candidate/remove_candidate/${jobId}/${email}`, {
+                method: "DELETE",
+            });
+
+            let result = await response.json();
+            if (result.success) {
+                showToast("Candidate removed successfully!", "success");
+                loadCandidates(jobId); // Reload the list
+            } else {
+                showToast("Error removing candidate!", "error");
+            }
+        } catch (error) {
+            console.log(error);
+            showToast("Error processing request.", "error");
+        }
+    }
+
+    function showToast(message, type) {
+        let toastContainer = document.getElementById("toastContainer");
+        let bgColor = type === "success" ? "bg-success" : "bg-danger";
+        let toast = document.createElement("div");
+        toast.className = `toast align-items-center text-white ${bgColor} border-0`;
+        toast.setAttribute("role", "alert");
+        toast.setAttribute("aria-live", "assertive");
+        toast.setAttribute("aria-atomic", "true");
+        toast.innerHTML = `<div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>`;
+        toastContainer.appendChild(toast);
+        let bsToast = new bootstrap.Toast(toast);
+        bsToast.show();
+        setTimeout(() => toast.remove(), 4000);
+    }
+</script>
+
+{% endblock %}
