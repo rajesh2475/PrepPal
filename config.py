@@ -10,6 +10,6 @@ class Config:
     UPLOAD_FOLDER = 'uploads/resumes/'
     SQLALCHEMY_DATABASE_URI = os.getenv(
         'DATABASE_URL',
-        'mysql+pymysql://root:Hanshith%4001@localhost/preppal'
+        'mysql+pymysql://user:pwd@localhost/preppal'
     )  # Update with your MySQL credentials
     SQLALCHEMY_TRACK_MODIFICATIONS = False  # Disable event system overhead
