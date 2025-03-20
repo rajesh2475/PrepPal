@@ -24,3 +24,6 @@ uploads/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Session
+flask_session/
