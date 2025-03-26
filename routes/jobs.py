@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: July 12, 2024
+Description: Routes for managing job openings, including viewing, adding, updating, and deleting jobs.
+"""
+
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request
 from extensions import db  # Import db from extensions.py
 from models import JobOpening, Candidate  # Import models for the tables

@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: July 03, 2024
+Description: Routes for rendering the main pages, including the home page with login and signup forms.
+"""
+
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request
 from forms import LoginForm, SignupForm
 

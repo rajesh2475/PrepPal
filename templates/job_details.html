@@ -147,10 +147,23 @@
         });
     }
 
-    // Function to schedule an interview
     function scheduleInterview(email) {
-        alert(`Scheduling interview for Candidate ID: ${email}`);
-        // Implement interview scheduling logic here (e.g., open a modal or redirect to another page)
+        fetch('/schedule_interview', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ candidate_email: email })
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert(`Interview scheduled successfully!\nInterview Link: ${result.interview_link}`);
+            } else {
+                alert(`Failed to schedule interview: ${result.message}`);
+            }
+        })
+        .catch(error => console.error('Error scheduling interview:', error));
     }
 
     // Function to remove a candidate
