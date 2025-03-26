@@ -27,3 +27,5 @@ Thumbs.db
 
 # Session
 flask_session/
+
+setup_env.sh

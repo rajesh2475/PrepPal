@@ -34,11 +34,24 @@ class JobOpening(db.Model):
         }
 
 class Candidate(db.Model):
-    __tablename__ = 'candidates'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255))
-    email = db.Column(db.String(255))
-    phone = db.Column(db.String(50))
-    resume = db.Column(db.String(255))
+    name = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
+    phone = db.Column(db.String(15))
+    resume_link = db.Column(db.String(255))
+    chat_id = db.Column(db.String(50), unique=True)
     score = db.Column(db.Float)
-    job_id = db.Column(db.Integer, db.ForeignKey('job_openings.id'))
+    job_id = db.Column(db.Integer)
+
+class Interview(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'), nullable=False)
+    interview_link = db.Column(db.String(255), unique=True, nullable=False)
+    status = db.Column(db.String(50), default="Scheduled")  # e.g., Scheduled, Completed
+    chat_id = db.Column(db.String(100), unique=True, nullable=True)
+
+class ChatHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.String(100), unique=True, nullable=False)
+    questions = db.Column(db.Text, nullable=False)  # JSON string of questions
+    responses = db.Column(db.Text, nullable=True)  # JSON string of answers
