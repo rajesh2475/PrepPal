@@ -1,3 +1,10 @@
+
+"""
+Created by: Rajesh M
+Date: June 21, 2024
+Description: Flask application factory for initializing the app, database, and registering blueprints.
+"""
+
 from flask import Flask
 from config import Config
 from extensions import db  # Import db from extensions.py

@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: July 04, 2024
+Description: Authentication routes for login, signup, and logout functionality.
+"""
+
 from forms import LoginForm, SignupForm
 from flask import session, redirect, url_for, flash, Blueprint
 

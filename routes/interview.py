@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: July 22, 2024
+Description: Routes for managing interviews, including scheduling, evaluating, and handling AI-driven interviews.
+"""
+
 from flask import Flask, request, jsonify, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 import requests

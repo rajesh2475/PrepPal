@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: July 12, 2024
+Description: Routes for ChatGPT-related functionality, including rendering the QnA page.
+"""
+
 from flask import render_template, Blueprint
 
 # Blueprint for ChatGPT-related routes

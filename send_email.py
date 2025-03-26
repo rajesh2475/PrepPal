@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: March 26, 2025
+Description: Utility for sending email notifications to candidates and users.
+"""
+
 import smtplib
 from email.mime.text import MIMEText
 import os

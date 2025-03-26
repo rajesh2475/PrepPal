@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: June 24, 2024
+Description: Database models for the PrepPal application, including JobOpening, Candidate, Interview, and ChatHistory.
+"""
+
 from extensions import db  # Import db from extensions.py
 
 class JobOpening(db.Model):

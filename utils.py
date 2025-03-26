@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: June 21, 2024
+Description: Utility functions for resume validation, text extraction, and scoring mechanisms.
+"""
+
 from models import JobOpening, Candidate
 import PyPDF2
 import docx

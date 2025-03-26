@@ -1,3 +1,9 @@
+"""
+Created by: Rajesh M
+Date: July 10, 2024
+Description: Candidate management routes for adding, retrieving, and removing candidates.
+"""
+
 from flask import Blueprint, request, jsonify
 from werkzeug.utils import secure_filename
 from extensions import db  # Import db from extensions.py
