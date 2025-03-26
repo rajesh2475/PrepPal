@@ -123,6 +123,10 @@ Then open `http://localhost:8000` in a browser.
 - **Improve AI response evaluation.**
 - **Add real-time feedback to candidates.**
 
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
 
 
 
